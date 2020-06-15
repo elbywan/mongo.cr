@@ -173,11 +173,19 @@ class BSON
   end
 
   def []=(key, value : Time)
-    LibBSON.bson_append_date_time(handle, key, key.bytesize, value.to_utc.to_unix * 1000)
+    LibBSON.bson_append_date_time(handle, key, key.bytesize, value.to_utc.to_unix_ms)
   end
 
   def []=(key, value : Timestamp)
     LibBSON.bson_append_timestamp(handle, key, key.bytesize, value.timestamp, value.increment)
+  end
+
+  def []=(key, value : Array(BSON::Field))
+    LibBSON.bson_append_array(handle, key, key.bytesize, value.to_bson)
+  end
+
+  def []=(key, value : Hash(String, BSON::Field))
+    LibBSON.bson_append_document(handle, key, key.bytesize, value.to_bson)
   end
 
   def []=(key, value : Code)
